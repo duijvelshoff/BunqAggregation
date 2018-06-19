@@ -19,6 +19,7 @@
       <Variable name="MONGODB_DATABASE" value="" />
       <Variable name="MONGODB_COLLECTION" value="" />
       <Variable name="BUNQ_API_KEY" value="" />
+      <Variable name="WEBAPP_SECRET" value="" />
     </EnvironmentVariables>
   </PropertyGroup>
   <ItemGroup>

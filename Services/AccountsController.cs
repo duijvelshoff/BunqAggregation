@@ -17,7 +17,7 @@ namespace bunqAggregation.Services
         public IActionResult List()
         {
             JObject response = new JObject();
-            JObject accounts = new JObject();
+            JObject details = new JObject();
 
             string UserId = null;
 
@@ -30,20 +30,20 @@ namespace bunqAggregation.Services
 
             if (Collection.Registerd(UserId))
             {
-                List<Account> Accounts = Account.List(UserId);
-                if(Accounts.Count > 0)
+                List<Account> accounts = Account.List(UserId);
+                if(accounts.Count > 0)
                 {
-                    accounts.Add("accounts", new JArray());
-                    foreach (Account Account in Accounts)
+                    details.Add("accounts", new JArray());
+                    foreach (Account account in accounts)
                     {
-                        ((JArray)accounts.GetValue("accounts")).Add(new JObject{
-                            {"id", Account.Id},
-                            {"iban", Account.IBAN},
-                            {"description", Account.Description},
-                            {"access_rights", Account.AccessRights}
+                        ((JArray)details.GetValue("accounts")).Add(new JObject{
+                            {"id", account.Id},
+                            {"iban", account.IBAN},
+                            {"description", account.Description},
+                            {"access_rights", account.AccessRights}
                         });
                     }
-                    response.Add("data", accounts);
+                    response.Add("data", details);
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace bunqAggregation.Services
             else
             {
                 response.Add("error", new JObject {
-                    {"message", "The user has no bunq Current Account added yet!"}
+                    {"message", UserId + "The user has no bunq Current Account added yet!"}
                 });
             }
 

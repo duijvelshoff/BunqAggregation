@@ -4,3 +4,5 @@ dotnet: 1.1.8
 script:
  - dotnet restore
  - dotnet build
+deploy:
+  provider: azure_web_apps

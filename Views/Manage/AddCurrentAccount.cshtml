@@ -1,5 +1,5 @@
 ﻿@using bunqAggregation.Models;
-@using bunqAggregation.Common;
+@using bunqAggregation.Core;
 @using Microsoft.AspNetCore.Mvc;
 @model AddCurrentAccountModel
 @{
@@ -25,7 +25,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
 <script language="javascript">
 function checkstatus() {
-    url = "@Settings.ServiceUrl/api/accounts/status";
+    url = "@Config.Service.Url/api/accounts/status";
     data = {
         "data" : {
             "draftid" : @Model.DraftId

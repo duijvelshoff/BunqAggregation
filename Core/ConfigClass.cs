@@ -12,6 +12,8 @@ namespace bunqAggregation.Core
             public static string Secret = Environment.GetEnvironmentVariable("SERVICE_SECRET");
         }
 
+        public static string Secret = Environment.GetEnvironmentVariable("WEBAPP_SECRET");
+
         public static class MongoDataBase
         {
             public static string Url = Environment.GetEnvironmentVariable("MONGODB_URL");
@@ -24,12 +26,12 @@ namespace bunqAggregation.Core
         public static class IFTTT
         {
             public static string ChannelKey = Environment.GetEnvironmentVariable("IFTTT_CHANNEL_KEY");
-            public static readonly string ServiceKey = Environment.GetEnvironmentVariable("IFTTT_SERVICE_KEY");
+            public static string ServiceKey = Environment.GetEnvironmentVariable("IFTTT_SERVICE_KEY");
 
             public static class Test
             {
                 public static string Username = Environment.GetEnvironmentVariable("IFTTT_TEST_USERNAME");
-                public static readonly string Password = Environment.GetEnvironmentVariable("IFTTT_TEST_PASSWORD");
+                public static string Password = Environment.GetEnvironmentVariable("IFTTT_TEST_PASSWORD");
             } 
         }
 

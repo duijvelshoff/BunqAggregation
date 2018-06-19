@@ -73,7 +73,7 @@ namespace bunqAggregation
                 RequireHttpsMetadata = false,
 
                 ClientId = "bunqaggregation",
-                ClientSecret = Config.Service.Secret,
+                ClientSecret = Config.Secret,
 
                 ResponseType = "code id_token",
                 Scope = { "bunqaggregation" },

@@ -26,7 +26,6 @@ namespace bunqAggregation.Core
 
         public static BsonDocument RetrieveDocument(BsonDocument filter)
         {
-            Console.WriteLine(Config.MongoDataBase.Url);
             var conn = new MongoClient("mongodb://" + Config.MongoDataBase.Url + "/?ssl=true&replicaSet=globaldb");
             var database = conn.GetDatabase(Config.MongoDataBase.Database);
             var collection = database.GetCollection<BsonDocument>(Config.MongoDataBase.Collection);
