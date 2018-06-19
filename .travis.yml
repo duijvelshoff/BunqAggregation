@@ -1,0 +1,6 @@
+﻿language: csharp
+mono: none
+dotnet: 1.1.8
+script:
+ - dotnet restore
+ - dotnet build
