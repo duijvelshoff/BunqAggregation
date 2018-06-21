@@ -19,8 +19,8 @@ namespace bunqAggregation.Services
         {
             string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            JObject response = new JObject();
-            JObject rules = new JObject();
+            var response = new JObject();
+            var rules = new JObject();
 
             if (Collection.Registerd(userObjectID))
             {
@@ -61,9 +61,26 @@ namespace bunqAggregation.Services
         [HttpPost]
         public IActionResult Add([FromBody] JObject content)
         {
-            JObject response = new JObject();
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            return StatusCode(200, content);
+            var response = new JObject();
+
+            var data = content["data"];
+
+            Rule rule = new Rule
+            {
+                Name = (string)data["rule"]["name"],
+                Condition = (JObject)data["rule"]["condition"],
+                Actions = (JArray)data["rule"]["actions"]
+            };
+
+            var ruleId = Rule.Add(userObjectID, rule);
+
+            response.Add("data", new JObject {
+                {"ruleid", ruleId}
+            });
+
+            return StatusCode(200, response);
         }
 
         [Authorize]
@@ -71,9 +88,25 @@ namespace bunqAggregation.Services
         [HttpPost]
         public IActionResult Update([FromBody] JObject content)
         {
-            JObject response = new JObject();
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            return StatusCode(200, content);
+            var response = new JObject();
+
+            var data = content["data"];
+
+            Rule rule = new Rule
+            {
+                Id = (string)data["rule"]["id"],
+                Name = (string)data["rule"]["name"],
+                Condition = (JObject)data["rule"]["condition"],
+                Actions = (JArray)data["rule"]["actions"]
+            };
+
+            var update = Rule.Update(userObjectID, rule);
+
+            response.Add("data", update);
+
+            return StatusCode(200, response);
         }
 
         [Authorize]
@@ -81,9 +114,29 @@ namespace bunqAggregation.Services
         [HttpPost]
         public IActionResult Delete([FromBody] JObject content)
         {
-            JObject response = new JObject();
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            return StatusCode(200, content);
+            var data = content["data"];
+
+            Rule rule = new Rule
+            {
+                Id = (string)data["rule"]["id"]
+            };
+
+            var delete = new JObject();
+            try
+            {
+                Rule.Delete(userObjectID, rule.Id);
+                delete.Add("status", "executed");
+            }
+            catch
+            {
+                delete.Add("error", new JObject{
+                    {"message", "Execution failed!"}
+                });
+            }
+
+            return StatusCode(200, delete);
         }
     }
 }
