@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using bunqAggregation.Services;
 
 namespace bunqAggregation
 {
@@ -14,6 +15,7 @@ namespace bunqAggregation
     {
         public static void Main(string[] args)
         {
+            Task.Run(() => Trigger.Job());
             BuildWebHost(args).Run();
         }
 
