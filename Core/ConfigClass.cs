@@ -4,15 +4,11 @@ namespace bunqAggregation.Core
 {
     public static class Config
     {
-        public static string Authority = Environment.GetEnvironmentVariable("AUTHORITY");
-
         public static class Service
         {
             public static string Url = Environment.GetEnvironmentVariable("SERVICE_URL");
-            public static string Secret = Environment.GetEnvironmentVariable("SERVICE_SECRET");
+            public static string Id = Environment.GetEnvironmentVariable("SERVICE_ID");
         }
-
-        public static string Secret = Environment.GetEnvironmentVariable("WEBAPP_SECRET");
 
         public static class MongoDataBase
         {
@@ -32,13 +28,9 @@ namespace bunqAggregation.Core
             {
                 public static string Username = Environment.GetEnvironmentVariable("IFTTT_TEST_USERNAME");
                 public static string Password = Environment.GetEnvironmentVariable("IFTTT_TEST_PASSWORD");
+                public static string ClientId = Environment.GetEnvironmentVariable("IFTTT_CLIENT_ID");
+                public static string Secret = Environment.GetEnvironmentVariable("IFTTT_CLIENT_SECRET");
             } 
-        }
-
-        public class Client
-        {
-            public const string Browser = "Cookies, oidc";
-            public const string Service = "Bearer";
         }
     }
 }

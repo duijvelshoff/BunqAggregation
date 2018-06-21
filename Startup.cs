@@ -1,19 +1,47 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using bunqAggregation.Core;
-using bunqAggregation.Intergration.bunq;
+using Microsoft.Extensions.Options;
+using bunqAggregation.Intergrations.bunq;
 
 namespace bunqAggregation
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddAuthentication(sharedOptions =>
+            {
+                sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
+
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
             if (!(File.Exists(@"bunq.conf")))
             {
                 Connection.Register(env);
@@ -23,79 +51,14 @@ namespace bunqAggregation
                 Connection.Initialize();
             }
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
-
-        public IConfigurationRoot Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvcCore()
-                .AddAuthorization()
-                .AddJsonFormatters()
-                .AddRazorViewEngine();
-        }
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationScheme = "Cookies",
-                AutomaticChallenge = false,
-                ExpireTimeSpan = System.TimeSpan.FromMinutes(15)
-            });
-
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
-            {
-                AuthenticationScheme = "oidc",
-                SignInScheme = "Cookies",
-
-                Authority = Config.Authority,
-                RequireHttpsMetadata = false,
-
-                ClientId = "bunqaggregation",
-                ClientSecret = Config.Secret,
-
-                ResponseType = "code id_token",
-                Scope = { "bunqaggregation" },
-
-                GetClaimsFromUserInfoEndpoint = true,
-                SaveTokens = true,
-                AutomaticChallenge = false
-            });
-
-            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
-            {
-                AuthenticationScheme = "Bearer",
-                Authority = Config.Authority,
-                RequireHttpsMetadata = false,
-                ApiName = "bunqaggregation",
-                AutomaticChallenge = false
-            });
-
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseStatusCodePagesWithReExecute("/Error", "?status={0}");
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc();
         }
     }
 }

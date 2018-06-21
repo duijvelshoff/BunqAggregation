@@ -2,26 +2,20 @@
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using bunqAggregation.Core;
-using bunqAggregation.Intergration.bunq;
+using bunqAggregation.Intergrations.bunq;
 
 namespace bunqAggregation.Services
 {
     [Route("api/[controller]")]
     public class PaymentController : Controller
     {
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [HttpPost]
         public IActionResult Execute([FromBody] JObject content)
         {
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
+
             JObject response = new JObject();
-            string UserId = null;
-            foreach (var claim in User.Claims)
-            {
-                if (claim.Type == "sub")
-                {
-                    UserId = claim.Value;
-                }
-            }
 
             var data = content["data"];
 
@@ -36,7 +30,7 @@ namespace bunqAggregation.Services
                 return StatusCode(400, ErrorMessages.MandatoryFieldAreMissing());
             }
 
-            var paymentResponse = Payment.Execute(UserId, (JObject)data);
+            var paymentResponse = Payment.Execute(userObjectID, (JObject)data);
 
             if (paymentResponse != 0)
             {

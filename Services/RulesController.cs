@@ -12,27 +12,19 @@ namespace bunqAggregation.Services
     [Route("api/[controller]")]
     public class RulesController : Controller
     {
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("list")]
         [HttpGet]
         public IActionResult List()
         {
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
+
             JObject response = new JObject();
             JObject rules = new JObject();
 
-            string UserId = null;
-
-            foreach (var claim in User.Claims)
+            if (Collection.Registerd(userObjectID))
             {
-                if (claim.Type == "sub")
-                {
-                    UserId = claim.Value;
-                }
-            }
-
-            if (Collection.Registerd(UserId))
-            {
-                List<Rule> Rules = Rule.List(UserId);
+                List<Rule> Rules = Rule.List(userObjectID);
                 if (Rules.Count > 0)
                 {
                     rules.Add("rules", new JArray());
@@ -64,7 +56,7 @@ namespace bunqAggregation.Services
             return StatusCode(200, response);
         }
 
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("add")]
         [HttpPost]
         public IActionResult Add([FromBody] JObject content)
@@ -74,7 +66,7 @@ namespace bunqAggregation.Services
             return StatusCode(200, content);
         }
 
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("update")]
         [HttpPost]
         public IActionResult Update([FromBody] JObject content)
@@ -84,7 +76,7 @@ namespace bunqAggregation.Services
             return StatusCode(200, content);
         }
 
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("delete")]
         [HttpPost]
         public IActionResult Delete([FromBody] JObject content)

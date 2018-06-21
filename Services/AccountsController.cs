@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using bunqAggregation.Core;
-using bunqAggregation.Intergration.bunq;
+using bunqAggregation.Intergrations.bunq;
 
 namespace bunqAggregation.Services
 {
     [Route("api/[controller]")]
     public class AccountsController : Controller
     {
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("list")]
         [HttpGet]
         public IActionResult List()
@@ -19,18 +19,11 @@ namespace bunqAggregation.Services
             JObject response = new JObject();
             JObject details = new JObject();
 
-            string UserId = null;
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            foreach (var claim in User.Claims) {
-                if (claim.Type == "sub")
-                {
-                    UserId = claim.Value;
-                }
-            }
-
-            if (Collection.Registerd(UserId))
+            if (Collection.Registerd(userObjectID))
             {
-                List<Account> accounts = Account.List(UserId);
+                List<Account> accounts = Account.List(userObjectID);
                 if(accounts.Count > 0)
                 {
                     details.Add("accounts", new JArray());
@@ -55,30 +48,24 @@ namespace bunqAggregation.Services
             else
             {
                 response.Add("error", new JObject {
-                    {"message", UserId + "The user has no bunq Current Account added yet!"}
+                    {"message", userObjectID + "The user has no bunq Current Account added yet!"}
                 });
             }
 
             return StatusCode(200,response);
         }
 
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("add")]
         [HttpGet]
         public IActionResult Add()
         {
             JObject response = new JObject();
-            string UserId = null;
 
-            foreach (var claim in User.Claims)
-            {
-                if (claim.Type == "sub")
-                {
-                    UserId = claim.Value;
-                }
-            }
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
-            var Draft = new Connect.Create(UserId);
+
+            var Draft = new Connect.Create(userObjectID);
 
             response.Add("data", new JObject {
                 {"draftid", Draft.Id},
@@ -88,19 +75,12 @@ namespace bunqAggregation.Services
             return StatusCode(200, response);
         }
 
-        [Authorize(ActiveAuthenticationSchemes = Config.Client.Service)]
+        [Authorize]
         [Route("status")]
         [HttpPost]
         public IActionResult Status([FromBody] JObject content)
         {
-            string UserId = null;
-            foreach (var claim in User.Claims)
-            {
-                if (claim.Type == "sub")
-                {
-                    UserId = claim.Value;
-                }
-            }
+            string userObjectID = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
 
             var data = content["data"];
 
@@ -120,7 +100,7 @@ namespace bunqAggregation.Services
 
             int DraftId = Convert.ToInt32(draftid);
 
-            var response = Connect.Status(UserId, DraftId);
+            var response = Connect.Status(userObjectID, DraftId);
 
             return StatusCode(200, response);
         }

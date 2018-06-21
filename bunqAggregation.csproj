@@ -1,64 +1,59 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+    <Folder Include="Intergrations\" />
+    <Folder Include="Intergrations\bunq\" />
+    <Folder Include="Services\" />
+    <Folder Include="Core\" />
+    <Folder Include="Intergrations\IFTTT\" />
+  </ItemGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <StartAction>Project</StartAction>
     <EnvironmentVariables>
       <Variable name="ASPNETCORE_ENVIRONMENT" value="Development" />
+      <Variable name="SERVICE_ID" value="" />
       <Variable name="SERVICE_URL" value="http://localhost:5000" />
-      <Variable name="SERVICE_SECRET" value="" />
-      <Variable name="AUTHORITY" value="" />
+      <Variable name="IFTTT_CLIENT_SECRET" value="" />
       <Variable name="IFTTT_CHANNEL_KEY" value="" />
       <Variable name="IFTTT_SERVICE_KEY" value="" />
       <Variable name="IFTTT_TEST_USERNAME" value="" />
       <Variable name="IFTTT_TEST_PASSWORD" value="" />
+      <Variable name="IFTTT_CLIENT_ID" value="" />
       <Variable name="MONGODB_URL" value="" />
       <Variable name="MONGODB_DATABASE" value="" />
       <Variable name="MONGODB_COLLECTION" value="" />
       <Variable name="BUNQ_API_KEY" value="" />
-      <Variable name="WEBAPP_SECRET" value="" />
     </EnvironmentVariables>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="MongoDB.Driver" Version="2.6.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.6.1" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.6.1" />
     <PackageReference Include="ncrontab" Version="3.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Bunq.Sdk" Version="0.13.1-beta" />
-    <PackageReference Include="MongoDB.Bson" Version="2.6.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.6.1" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.6.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="1.1.1" />
-    <PackageReference Include="IdentityModel" Version="2.8.1" />  
-    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
-    <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.2.301" />
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-    <Folder Include="Intergration\" />
-    <Folder Include="Views\" />
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-    <Folder Include="WebApplication\" />
-    <Folder Include="Core\" />
+    <Reference Include="Bunq.Sdk">
+      <HintPath>Assemblies/Bunq.Sdk/Bunq.Sdk.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Properties\PublishProfiles\DProject-BunqAggregation - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <None Update="bunq.conf">

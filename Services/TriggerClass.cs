@@ -5,7 +5,7 @@ using MongoDB.Bson;
 using NCrontab;
 using Newtonsoft.Json.Linq;
 using bunqAggregation.Core;
-using bunqAggregation.Intergration.bunq;
+using bunqAggregation.Intergrations.bunq;
 
 namespace bunqAggregation.Services
 {

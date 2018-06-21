@@ -3,6 +3,8 @@
 
 #Config
 bunq.conf
+appsettings.Development.json
+bunqAggregation.csproj.dev
 
 #Deploy
 Properties/PublishProfiles/
